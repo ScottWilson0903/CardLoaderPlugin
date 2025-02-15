@@ -1,4 +1,3 @@
-using System.Collections;
 using DiskCardGame;
 using GBC;
 using HarmonyLib;
@@ -6,8 +5,8 @@ using InscryptionAPI.Encounters;
 using InscryptionAPI.Helpers;
 using InscryptionAPI.Helpers.Extensions;
 using InscryptionAPI.Saves;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 using static InscryptionAPI.Slots.SlotModificationManager;
 
 namespace InscryptionAPI.Slots;

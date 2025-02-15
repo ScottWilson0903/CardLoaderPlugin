@@ -1,9 +1,7 @@
 using DiskCardGame;
 using GBC;
-using InscryptionAPI;
 using InscryptionAPI.Helpers;
 using InscryptionAPI.Helpers.Extensions;
-using InscryptionCommunityPatch.Card;
 using Pixelplacement;
 using Sirenix.Utilities;
 using System.Collections;
@@ -95,7 +93,7 @@ public class PixelPlayableCardArray : ManagedBehaviour
         }
 
         InitializeGamepadGrid();
-        
+
         yield return SpawnAndPlaceCards(cards, GetNumRows(cards.Count), 0, false, forPositiveEffect);
         InitialiseButtons(cards, false, forPositiveEffect);
 

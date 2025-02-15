@@ -1,4 +1,3 @@
-using System.Collections;
 using DiskCardGame;
 
 namespace InscryptionAPI.Slots;

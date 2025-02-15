@@ -1,6 +1,5 @@
 using DiskCardGame;
 using HarmonyLib;
-using InscryptionAPI.Helpers;
 using InscryptionAPI.Helpers.Extensions;
 using System.Collections;
 using System.Reflection;
@@ -68,10 +67,10 @@ public static class DoCombatPhasePatches
     {
         List<CardSlot> originalSlots = BoardManager.Instance.GetSlotsCopy(playerIsAttacker);
         List<CardSlot> currentSlots = new(originalSlots);
-        
+
         var triggers = CustomTriggerFinder.FindTriggersOnBoard<IGetAttackingSlots>(false).ToList();
         triggers.Sort((IGetAttackingSlots a, IGetAttackingSlots b) => b.TriggerPriority(playerIsAttacker, originalSlots) - a.TriggerPriority(playerIsAttacker, originalSlots));
-        
+
         foreach (IGetAttackingSlots t in triggers)
         {
             if ((t as TriggerReceiver) != null && t.RespondsToGetAttackingSlots(playerIsAttacker, originalSlots, currentSlots))

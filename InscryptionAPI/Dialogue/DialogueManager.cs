@@ -40,7 +40,7 @@ public static class DialogueManager
 
         DialogueDataUtil.Data?.events?.RemoveAll(d => d.id == dialogueEvent.id);
         DialogueDataUtil.Data?.events?.Add(dialogueEvent);
-        
+
         return dialogue;
     }
 

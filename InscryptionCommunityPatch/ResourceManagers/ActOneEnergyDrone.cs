@@ -44,7 +44,7 @@ public static class EnergyDrone
         string activeSceneName = sceneName.ToLowerInvariant();
         if (activeSceneName.Contains("part1"))
             return !activeSceneName.Contains("sanctum") && !activeSceneName.Contains("finale");
-        
+
         return activeSceneName.Contains("magnificus") || activeSceneName.Contains("grimora");
     }
 

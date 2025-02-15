@@ -185,7 +185,7 @@ public class TradePeltsSequencer_TradePelts
 
             // remove unnecessary opcode
             codes.RemoveAt(searchIndex + 1);
-            
+
             // update the index
             searchIndex = codes.FindIndex(searchIndex, x => x.opcode == OpCodes.Callvirt && x.operand.ToString() == GetTradeCardInfos);
             int endIndex = codes.FindIndex(searchIndex, x => x.opcode == OpCodes.Stfld && x.operand.ToString() == Current);
@@ -238,7 +238,7 @@ public class TradePeltsSequencer_TradePelts
             float anchorOffset = (4 - actualCardsPerRow) * (__instance.CARD_SPACING.x / 2f);
 
             Vector3 vector = __instance.CARDS_ANCHOR + new Vector3(anchorOffset + __instance.CARD_SPACING.x * num, 0f, __instance.CARD_SPACING.y * num2);
-            
+
             // we treat this as a bool indicating whether there's 1 row or 2
             if (rareCards)
                 vector.z = -2f;

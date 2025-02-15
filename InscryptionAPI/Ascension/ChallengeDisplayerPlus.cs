@@ -128,7 +128,7 @@ public class ChallengeDisplayerPlus : ManagedBehaviour
                     actualStrings = dependencyStrings.ConvertAll(x =>
                         !AscensionSaveData.Data.activeChallenges.Contains(x.challenge) ? $"[c:R]{x.FullText}[c:]" :
                         AscensionSaveData.Data.activeChallenges.Count(x2 => x2 == x.challenge) < x.number ? x.RedPrefixText : x.FullText);
-                    
+
                     dependency = "Depends on: " + string.Join(", ", actualStrings);
                 }
             }
@@ -141,7 +141,7 @@ public class ChallengeDisplayerPlus : ManagedBehaviour
                     AscensionChallengeInfo info = d.GetInfo();
                     if (info != null && !challenges.Contains(d))
                     {
-                        string prefix = AscensionSaveData.Data.activeChallenges.Contains(d) ? $"[c:R]{Localization.Translate(info.title)}[c:]" : Localization.Translate(info.title);                        
+                        string prefix = AscensionSaveData.Data.activeChallenges.Contains(d) ? $"[c:R]{Localization.Translate(info.title)}[c:]" : Localization.Translate(info.title);
                         incompatibilityStrings.Add(prefix);
                         challenges.Add(d);
                     }

@@ -1,12 +1,4 @@
 using DiskCardGame;
-using HarmonyLib;
-using InscryptionAPI.Card;
-using InscryptionAPI.Helpers.Extensions;
-using Steamworks;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -267,7 +259,7 @@ public class RuleBookRedirectManager : Singleton<RuleBookRedirectManager>
             correctedYProportion = (descriptionTopLeft.y - wordPos.y) / descriptionLengths[1];
             zCorrection = zLength * correctedYProportion;
             correctedY = currentPageTopLeft.y - (currentPageLengths[1] * correctedYProportion) - (zCorrection * correctedYProportion);
-            
+
         }
         correctedPos = new(correctedX, correctedY, currentPageTopLeft.z + (zCorrection + zCorrection * correctedYProportion));
         //Debug.Log($"[Corrected] ({correctedPos.x} {correctedPos.y} {correctedPos.z}) | {correctedXProportion} {correctedYProportion}");

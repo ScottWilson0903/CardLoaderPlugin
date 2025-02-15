@@ -1,7 +1,6 @@
 using DiskCardGame;
 using InscryptionAPI.CardCosts;
 using Sirenix.Utilities;
-using UnityEngine;
 using static InscryptionAPI.Card.CardModificationInfoManager;
 namespace InscryptionAPI.Card;
 
@@ -109,7 +108,7 @@ public static class CardModificationInfoExtensions
         string properties = GetCustomPropertiesIdString(mod);
         if (properties != null)
             mod.singletonId = mod.singletonId.Replace(properties, "");
-        
+
         return mod;
     }
     public static CardModificationInfo ClearCustomCostsId(this CardModificationInfo mod)
@@ -133,7 +132,7 @@ public static class CardModificationInfoExtensions
         {
             string newProperties;
             string oldProperties = GetCustomPropertiesIdString(mod); // get the current string of properties
-            
+
             // if the property is already set
             if (oldProperties.Contains(propertyName))
             {
@@ -239,7 +238,7 @@ public static class CardModificationInfoExtensions
             return null;
 
         string pairString = currentCosts.Substring(costIdx);
-        
+
         int valueIdx = pairString.IndexOf(';');
         if (valueIdx == -1) // if this is the last valuePair in the string
             valueIdx = pairString.IndexOf(']');

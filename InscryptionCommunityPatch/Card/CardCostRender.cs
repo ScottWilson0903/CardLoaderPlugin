@@ -2,7 +2,6 @@ using DiskCardGame;
 using GBC;
 using HarmonyLib;
 using InscryptionAPI.Card;
-using InscryptionAPI.CardCosts;
 //using InscryptionAPI.CardCosts;
 using InscryptionAPI.Helpers;
 using UnityEngine;
@@ -41,7 +40,7 @@ public static class CardCostRender
     {
         Texture2D baseTexture;
         List<Texture2D> masterTextures;
-        
+
         int bloodCost = playableCard?.BloodCost() ?? cardInfo.BloodCost;
         int bonesCost = playableCard?.BonesCost() ?? cardInfo.BonesCost;
         int energyCost = playableCard?.EnergyCost ?? cardInfo.EnergyCost;
@@ -79,19 +78,25 @@ public static class CardCostRender
         {
             __instance.costRenderer.sprite = FinalCostSprite(renderInfo.baseInfo, playableCard, TextureHelper.SpriteType.OversizedCostDecal, 28);
         }
-        else if (__instance is PixelCardDisplayer && PatchPlugin.act2CostRender.Value)
+        else if (__instance is PixelCardDisplayer pixelDisplay && PatchPlugin.act2CostRender.Value)
         {
-            __instance.costRenderer.sprite = FinalCostSprite(renderInfo.baseInfo, playableCard,
-                PatchPlugin.rightAct2Cost.Value ? TextureHelper.SpriteType.Act2CostDecalRight : TextureHelper.SpriteType.Act2CostDecalLeft, 8);
+            if (PatchPlugin.act2VanillaStyle.Value)
+            {
+                __instance.costRenderer.sprite = Part2CardCostRender.FinalVanillaCostSprite(pixelDisplay, renderInfo.baseInfo, playableCard, !PatchPlugin.rightAct2Cost.Value);
+            }
+            else
+            {
+                __instance.costRenderer.sprite = FinalCostSprite(renderInfo.baseInfo, playableCard,
+                    PatchPlugin.rightAct2Cost.Value ? TextureHelper.SpriteType.Act2CostDecalRight : TextureHelper.SpriteType.Act2CostDecalLeft, 8);
+            }
         }
     }
 
+    // prevents indexing error when a card has a cost greater than the vanilla limits
     [HarmonyPrefix, HarmonyPatch(typeof(CardDisplayer), nameof(CardDisplayer.GetCostSpriteForCard))]
-    private static bool Part1CardCostDisplayerPatch(CardDisplayer __instance)
+    private static bool Part1CardCostDisplayerPatch(CardDisplayer __instance, ref Sprite __result, CardInfo card)
     {
-        //Make sure we are in Leshy's Cabin
-        // prevents indexing error when a card has a cost greater than the vanilla limits
-        if (__instance is CardDisplayer3D && SceneLoader.ActiveSceneName.StartsWith("Part1"))
+        if (__instance is CardDisplayer3D && SceneLoader.ActiveSceneName.StartsWith("Part1")) // Make sure we are in Leshy's Cabin
         {
             return false;
         }
@@ -99,7 +104,6 @@ public static class CardCostRender
         {
             return false;
         }
-
 
         return true;
     }

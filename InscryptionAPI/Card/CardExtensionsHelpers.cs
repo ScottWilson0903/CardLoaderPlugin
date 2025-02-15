@@ -818,7 +818,7 @@ public static partial class CardExtensions
         Type type = ShieldManager.AllShieldAbilities.AbilityByID(ability)?.AbilityBehavior;
         if (type == null)
             return null;
-        
+
         return card.GetComponent(type) as DamageShieldBehaviour;
     }
     /// <summary>

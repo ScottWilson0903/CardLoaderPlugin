@@ -1,7 +1,6 @@
 using DiskCardGame;
 using HarmonyLib;
 using InscryptionAPI.Helpers;
-using System.Collections;
 using UnityEngine;
 
 namespace InscryptionCommunityPatch.Sequencers;

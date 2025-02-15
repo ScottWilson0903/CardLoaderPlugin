@@ -1,11 +1,8 @@
 using DiskCardGame;
-using GBC;
-using HarmonyLib;
 using InscryptionAPI.Card;
 using InscryptionAPI.CardCosts;
 //using InscryptionAPI.CardCosts;
 using InscryptionAPI.Helpers;
-using System.Linq;
 using UnityEngine;
 
 namespace InscryptionCommunityPatch.Card;
@@ -32,7 +29,7 @@ public static class Part1CardCostRender
             costTextures.Add(CardCostRender.GetTextureByName($"energy_cost_{Mathf.Min(7, energyCost)}"));
 
         if (bonesCost > 0)
-            costTextures.Add(CardCostRender.GetTextureByName($"bone_cost_{Mathf.Min(14, bonesCost)}"));
+            costTextures.Add(CardCostRender.GetTextureByName($"bone_cost_{Mathf.Min(16, bonesCost)}"));
 
         if (bloodCost > 0)
             costTextures.Add(CardCostRender.GetTextureByName($"blood_cost_{Mathf.Min(14, bloodCost)}"));

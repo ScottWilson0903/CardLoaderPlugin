@@ -30,7 +30,7 @@ public class InscryptionAPIPlugin : BaseUnityPlugin
 {
     public const string ModGUID = "cyantist.inscryption.api";
     public const string ModName = "InscryptionAPI";
-    public const string ModVer = "2.22.3";
+    public const string ModVer = "2.22.4";
 
     public static string Directory = "";
 
@@ -66,7 +66,7 @@ public class InscryptionAPIPlugin : BaseUnityPlugin
     {
         Logger = base.Logger;
         Directory = Path.GetDirectoryName(Info.Location);
-        
+
         HarmonyInstance.PatchAll(typeof(InscryptionAPIPlugin).Assembly);
     }
 
@@ -127,7 +127,7 @@ public class InscryptionAPIPlugin : BaseUnityPlugin
         PeltManager.CreateDialogueEvents();
         if (!DialogueManager.CustomDialogue.Exists(x => x.DialogueEvent.id == "Hint_NotEnoughSameColourGemsHint"))
         {
-            
+
         }
         Logger.LogDebug($"Inserted {DialogueManager.CustomDialogue.Count} dialogue event(s)!");
     }

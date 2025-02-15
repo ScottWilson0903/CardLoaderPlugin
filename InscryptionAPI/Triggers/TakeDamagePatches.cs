@@ -1,13 +1,9 @@
 using DiskCardGame;
 using HarmonyLib;
 using InscryptionAPI.Card;
-using InscryptionAPI.Helpers;
-using InscryptionAPI.Helpers.Extensions;
-using Sirenix.Serialization.Utilities;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
-using UnityEngine;
 
 namespace InscryptionAPI.Triggers;
 
@@ -47,7 +43,7 @@ public static class TakeDamagePatches
         foreach (IModifyDamageTaken modify in modifyTakeDamage)
         {
             if (modify != null && modify.RespondsToModifyDamageTaken(__instance, damage, attacker, originalDamage))
-              damage = modify.OnModifyDamageTaken(__instance, damage, attacker, originalDamage);  
+                damage = modify.OnModifyDamageTaken(__instance, damage, attacker, originalDamage);
         }
 
         // no negative damage
@@ -68,7 +64,7 @@ public static class TakeDamagePatches
 
         yield return enumerator;
         if (__instance == null) yield break;
-        
+
         if (!__instance.HasShield() && attacker != null)
         {
             yield return CustomTriggerFinder.TriggerInHand<IOnOtherCardDealtDamageInHand>(
@@ -94,7 +90,7 @@ public static class TakeDamagePatches
         int shieldStart = -1, shieldEnd = -1;
         for (int i = 0; i < codes.Count; i++)
         {
-            
+
             // grab the required operands, in order of appearance in the code
             if (shieldStart == -1 && codes[i].operand?.ToString() == "Boolean HasShield()")
             {

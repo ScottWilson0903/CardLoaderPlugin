@@ -1,18 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using DiskCardGame;
 using GBC;
 using HarmonyLib;
-using InscryptionAPI.Card;
 using InscryptionAPI.Guid;
 using InscryptionAPI.Helpers;
-using InscryptionAPI.Helpers.Extensions;
 using InscryptionAPI.RuleBook;
-using InscryptionAPI.Triggers;
 using Sirenix.Serialization.Utilities;
+using System.Collections;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 namespace InscryptionAPI.Slots;
@@ -76,7 +70,7 @@ public class SlotModificationManager : MonoBehaviour
         /// </summary>
         public ModificationType SharedRulebook { get; set; } = ModificationType.NoModification;
         public List<ModificationMetaCategory> MetaCategories = new();
-        
+
         /// <summary>
         /// The slot's modified texture in 3D scenes (Leshy, P03, etc) (154x226)
         /// </summary>
@@ -551,12 +545,14 @@ public class SlotModificationManager : MonoBehaviour
             return;
 
         int curPageNum = 1;
-        GameObject itemPrefab = __instance.pageRanges.Find(x => x.type == PageRangeType.Items).rangePrefab;
-        int insertPosition = __result.FindLastIndex(rbi => itemPrefab) + 1;
+        PageRangeInfo itemPageRange = __instance.pageRanges.Find(x => x.type == PageRangeType.Items);
+        PageRangeInfo abilityRange = __instance.pageRanges.Find(x => x.type == PageRangeType.Abilities);
+        GameObject pagePrefab = (itemPageRange ?? abilityRange).rangePrefab;
+        int insertPosition = __result.FindLastIndex(rbi => pagePrefab) + 1;
         foreach (Info slot in infos)
         {
             RuleBookPageInfo info = new();
-            info.pagePrefab = SaveManager.SaveFile.IsPart1 ? itemPrefab : __instance.pageRanges.Find(x => x.type == PageRangeType.Abilities).rangePrefab;
+            info.pagePrefab = (SaveManager.SaveFile.IsPart1 ? itemPageRange : abilityRange).rangePrefab;
             info.headerText = string.Format(Localization.Translate("APPENDIX XII, SUBSECTION I - SLOT EFFECTS {0}"), curPageNum);
             info.pageId = SLOT_PAGEID + (int)slot.ModificationType;
             __result.Insert(insertPosition, info);
@@ -566,6 +562,7 @@ public class SlotModificationManager : MonoBehaviour
     }
 
     public const string SLOT_PAGEID = "SlotModification_";
+    private static Vector3 PART_3_SCALE = new(0.7f, 0.7f, 1f);
 
     [HarmonyPrefix, HarmonyPatch(typeof(ItemPage), nameof(ItemPage.FillPage))]
     private static bool OverrideWithSlotInfo(ItemPage __instance, string headerText, params object[] otherArgs)
@@ -574,7 +571,7 @@ public class SlotModificationManager : MonoBehaviour
             return true;
 
         // Slot modification pages use ItemPage format in Act 1
-        __instance.iconRenderer.transform.localScale = Vector3.one;
+        __instance.iconRenderer.transform.localScale = SaveManager.SaveFile.IsPart3 ? PART_3_SCALE : Vector3.one;
         if (otherArgs[0] is string pageId && pageId.StartsWith(SLOT_PAGEID))
         {
             string modString = pageId.Replace(SLOT_PAGEID, "");
@@ -588,24 +585,26 @@ public class SlotModificationManager : MonoBehaviour
                 __instance.nameTextMesh.text = Localization.Translate(info.RulebookName);
                 __instance.descriptionTextMesh.text = Localization.Translate(info.RulebookDescription);
                 __instance.iconRenderer.sprite = info.RulebookSprite;
-                __instance.iconRenderer.transform.localScale = new(0.8f, 0.8f, 0.8f);
+                __instance.iconRenderer.transform.localScale = new(0.8f, 0.8f, 1f);
                 InscryptionAPIPlugin.Logger.LogDebug($"Create rulebook page for slot modification [{info.ModificationType}] ({info.RulebookName}).");
                 return false;
             }
         }
         return true;
     }
+
     [HarmonyPrefix, HarmonyPatch(typeof(AbilityPage), nameof(AbilityPage.FillPage))]
     private static bool OverrideWithSlotInfo(AbilityPage __instance, string headerText, params object[] otherArgs)
     {
         if (SaveManager.SaveFile.IsPart1)
             return true;
 
-        __instance.mainAbilityGroup.iconRenderer.transform.localScale = Vector3.one;
+        __instance.mainAbilityGroup.iconRenderer.transform.localScale = SaveManager.SaveFile.IsPart3 ? PART_3_SCALE : Vector3.one;
         Transform slotRendererObj = __instance.mainAbilityGroup.transform.Find("SlotRenderer");
         slotRendererObj?.gameObject.SetActive(false);
         __instance.mainAbilityGroup.iconRenderer.transform.parent.gameObject.SetActive(true);
 
+        // if this page should be filled with info from a slot modification
         if (otherArgs.Length > 0 && otherArgs.Last() is string pageId && pageId.StartsWith(SLOT_PAGEID))
         {
             string modString = pageId.Replace(SLOT_PAGEID, "");
@@ -633,12 +632,24 @@ public class SlotModificationManager : MonoBehaviour
                     __instance.mainAbilityGroup.iconRenderer.transform.parent.gameObject.SetActive(false);
                     slotRendererObj.GetComponent<SpriteRenderer>().sprite = info.P03RulebookSprite ?? info.RulebookSprite;
                 }
+                else if (SaveManager.SaveFile.IsMagnificus)
+                {
+                    if (slotRendererObj == null)
+                    {
+                        slotRendererObj = Instantiate(__instance.mainAbilityGroup.iconRenderer.transform.parent, __instance.mainAbilityGroup.transform);
+                        slotRendererObj.name = "SlotRenderer";
+                        slotRendererObj.localPosition += new Vector3(0.1f, -0.1f, 0f);
+                    }
+                    slotRendererObj.gameObject.SetActive(true);
+                    __instance.mainAbilityGroup.iconRenderer.transform.parent.gameObject.SetActive(false);
+                    slotRendererObj.GetChild(0).GetComponent<MeshRenderer>().material.mainTexture = (info.MagnificusRulebookSprite ?? info.RulebookSprite).texture;
+                }
                 else
                 {
-                    Debug.Log("Help");
+                    InscryptionAPIPlugin.Logger.LogDebug("Slot modification page: WIP");
                 }
-                
-                __instance.mainAbilityGroup.iconRenderer.transform.localScale = new(0.8f, 0.8f, 0.8f);
+
+                __instance.mainAbilityGroup.iconRenderer.transform.localScale = new(0.8f, 0.8f, 1f);
                 //InscryptionAPIPlugin.Logger.LogDebug($"Create rulebook page for slot modification [{info.ModificationType}] ({info.RulebookName}).");
                 return false;
             }

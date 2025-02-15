@@ -1,7 +1,6 @@
 using DiskCardGame;
 using GBC;
 using HarmonyLib;
-using InscryptionAPI.Card;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -38,7 +37,7 @@ public class TempModPixelSigilsFix
 
         List<Ability> abilities = new(info.Abilities);
         List<Ability> tempAbilities = new();
-        
+
         foreach (CardModificationInfo mod in card.RenderInfo.temporaryMods)
         {
             if (mod.singletonId != "paint") // ignore abilities added by Magnificus

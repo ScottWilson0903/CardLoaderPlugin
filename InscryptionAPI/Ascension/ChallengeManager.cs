@@ -40,7 +40,7 @@ public static class ChallengeManager
         /// A function that needs to return true for the challenge to be unlocked. Optional. If this isn't set, this check will be bypassed. The int argument is the current Kaycee's Mod challenge level.
         /// </summary>
         public Func<int, bool> CustomUnlockCheck { get; set; }
-        
+
         /// <summary>
         /// If true, this challenge's icon(s) will occupy the entire column like the Final Boss challenge icon, and be ordered to the right of regular challenges.
         /// </summary>

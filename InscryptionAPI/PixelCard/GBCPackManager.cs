@@ -1,14 +1,8 @@
 using DiskCardGame;
 using GBC;
 using HarmonyLib;
-using InscryptionAPI.Card;
-using InscryptionAPI.Helpers;
-using InscryptionAPI.Resource;
-using Mono.Cecil;
 using System.Reflection;
 using System.Reflection.Emit;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace InscryptionAPI.PixelCard;
 

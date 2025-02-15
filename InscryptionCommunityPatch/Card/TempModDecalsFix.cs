@@ -1,5 +1,4 @@
 using DiskCardGame;
-using GBC;
 using HarmonyLib;
 using InscryptionAPI.Card;
 using System.Collections;

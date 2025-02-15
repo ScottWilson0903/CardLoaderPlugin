@@ -1,6 +1,6 @@
-using System.Reflection;
 using DiskCardGame;
 using InscryptionAPI.Guid;
+using System.Reflection;
 
 namespace InscryptionAPI.Regions;
 
@@ -20,12 +20,12 @@ public class Part1RegionData
 
     private int tier;
     private RegionData region;
-    
+
     public Part1RegionData(RegionData region, int tier)
     {
         Assembly callingAssembly = Assembly.GetCallingAssembly();
         GUID = TypeManager.GetModIdFromCallstack(callingAssembly);
-        
+
         AllowSacrificableTerrainCards = false;
         AllowLockedTerrainCards = false;
         MinTerrain = -2;

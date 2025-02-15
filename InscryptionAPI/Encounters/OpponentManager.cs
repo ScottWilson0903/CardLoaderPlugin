@@ -179,7 +179,7 @@ public static class OpponentManager
         __result = obj != null ? fullPath : "Prefabs/Map/MapNodesPart1/MapNode_ProspectorBoss";
         return false;
     }
-    
+
     [HarmonyPatch(typeof(Opponent), nameof(Opponent.CreateCard))]
     [HarmonyPrefix]
     private static bool CloneCardInfo(ref CardInfo cardInfo)
@@ -188,7 +188,7 @@ public static class OpponentManager
         cardInfo = (CardInfo)cardInfo.Clone();
         return true;
     }
-    
+
     [HarmonyPatch]
     private class MapGenerator_CreateNode
     {
@@ -309,7 +309,7 @@ public static class OpponentManager
     {
         private static readonly Type StartNewPhaseSequence = Type.GetType("DiskCardGame.TrapperTraderBossOpponent+<StartNewPhaseSequence>d__6, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         private static readonly MethodInfo PlayAnimationInfo = AccessTools.Method(typeof(PreventCallsOnScenary_Patches), nameof(PlayAnimation), new[] { typeof(Animation), typeof(string) });
-        
+
         private static IEnumerable<MethodBase> TargetMethods()
         {
             yield return AccessTools.Method(StartNewPhaseSequence, "MoveNext");
@@ -324,21 +324,21 @@ public static class OpponentManager
             // To
             //
             // PlayAnimation(sceneryObject.GetComponent<Animation>(), "knives_table_exit");
-            
+
             List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 
             for (int i = 0; i < codes.Count; i++)
             {
                 if (codes[i].opcode == OpCodes.Ldstr && codes[i].operand == "knives_table_exit")
                 {
-                    
+
                     // ldstr "knives_table_exit" 
-                    codes[i+1] = new CodeInstruction(OpCodes.Call, PlayAnimationInfo); // callvirt instance bool [UnityEngine.AnimationModule]UnityEngine.Animation::Play(string)
+                    codes[i + 1] = new CodeInstruction(OpCodes.Call, PlayAnimationInfo); // callvirt instance bool [UnityEngine.AnimationModule]UnityEngine.Animation::Play(string)
                     // pop
                     break;
                 }
             }
-            
+
             return codes;
         }
 

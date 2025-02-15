@@ -1,11 +1,9 @@
 using DiskCardGame;
 using InscryptionAPI;
-using InscryptionAPI.Boons;
 using InscryptionAPI.CardCosts;
 using InscryptionAPI.Helpers;
 using InscryptionCommunityPatch.Card;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
 namespace InscryptionCommunityPatch.Tests;
@@ -16,7 +14,7 @@ public class TestCost : CustomCardCost
     public static void Init()
     {
         PatchPlugin.Logger.LogDebug("Adding TestCost");
-        
+
         CardCostManager.Register(InscryptionAPIPlugin.ModGUID, "TestCost", typeof(TestCost), Texture3D, TexturePixel)
             .SetCostTier(CostTier)
             .SetCanBePlayedByTurn2WithHand(CanBePlayed)

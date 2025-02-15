@@ -1,8 +1,5 @@
 using DiskCardGame;
 using InscryptionAPI.Helpers;
-using InscryptionAPI.Nodes;
-using Sirenix.Utilities;
-using System.Collections;
 using UnityEngine;
 
 namespace InscryptionAPI.Card;
@@ -343,7 +340,7 @@ public static partial class CardExtensions
         }
         return info;
     }
-    
+
     /// <summary>
     /// Removes any number of traits from the card.
     /// </summary>

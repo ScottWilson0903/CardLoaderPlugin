@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Runtime.CompilerServices;
 using DiskCardGame;
 using GBC;
 using HarmonyLib;
 using InscryptionAPI.Card;
+using System.Collections;
+using System.Runtime.CompilerServices;
 using static DiskCardGame.EncounterBlueprintData;
 
 namespace InscryptionAPI.Encounters;

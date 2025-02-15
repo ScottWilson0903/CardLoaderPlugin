@@ -15,7 +15,7 @@ public static class SpecialTriggeredAbilityManager
 
         public FullSpecialTriggeredAbility(SpecialTriggeredAbility id, Type abilityBehaviour) : this(null, abilityBehaviour.ToString(), id, abilityBehaviour)
         {
-            
+
         }
 
         public FullSpecialTriggeredAbility(string guid, string name, SpecialTriggeredAbility id, Type abilityBehaviour)

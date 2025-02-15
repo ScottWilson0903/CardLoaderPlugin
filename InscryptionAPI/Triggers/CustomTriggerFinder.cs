@@ -1,8 +1,8 @@
-using System.Collections;
 using DiskCardGame;
 using InscryptionAPI.Card;
 using InscryptionAPI.Slots;
 using Sirenix.Serialization.Utilities;
+using System.Collections;
 
 namespace InscryptionAPI.Triggers;
 

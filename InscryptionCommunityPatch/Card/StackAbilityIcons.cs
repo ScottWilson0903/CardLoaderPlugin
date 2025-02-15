@@ -1,12 +1,9 @@
 using DiskCardGame;
 using GBC;
-using GracesGames.Common.Scripts;
 using HarmonyLib;
 using InscryptionAPI.Card;
 using InscryptionAPI.Helpers;
-using InscryptionAPI.Helpers.Extensions;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace InscryptionCommunityPatch.Card;
 
@@ -56,7 +53,7 @@ public static class StackAbilityIcons
 
     private static Sprite GetGBCNumberSprite(int number)
     {
-        var stackGBC = "stack_gbc.png";
+        string stackGBC = "stack_gbc.png";
         if (!PatchPlugin.act2StackIconType.Value)
             stackGBC = "stack_gbc_alt.png";
 
@@ -100,13 +97,6 @@ public static class StackAbilityIcons
 
     private static readonly Dictionary<string, Texture2D> patchedTexture = new();
     private static readonly Dictionary<Ability, Tuple<Vector2Int, int>> patchLocations = new();
-
-    [HarmonyPatch(typeof(CardAbilityIcons), "GetDistinctShownAbilities")]
-    [HarmonyPostfix]
-    private static void ClearStackableIcons(ref List<Ability> __result, CardInfo info, List<CardModificationInfo> mods, List<Ability> hiddenAbilities)
-    {
-        __result = __result.Distinct().ToList();
-    }
 
     private static Vector2Int FindMatchingOnesDigit(Texture2D searchTex, bool normalSize = true)
     {
@@ -245,7 +235,7 @@ public static class StackAbilityIcons
         if (patchedTexture.ContainsKey(textureName))
             return patchedTexture[textureName];
 
-        PatchPlugin.Logger.LogDebug($"Ability [{AbilitiesUtil.GetInfo(ability).rulebookName}] stacks {count} times.");
+        PatchPlugin.Logger.LogDebug($"Ability [{AbilitiesUtil.GetInfo(ability).rulebookName}] stacks [{count}] time(s).");
 
         // Copy the old texture to the new texture
         bool doubleDigit = count > 9;
@@ -301,6 +291,18 @@ public static class StackAbilityIcons
         return newTexture;
     }
 
+    [HarmonyPatch(typeof(CardAbilityIcons), "GetDistinctShownAbilities")]
+    [HarmonyPostfix]
+    private static void ClearStackableIcons(ref List<Ability> __result, CardInfo info, List<CardModificationInfo> mods, List<Ability> hiddenAbilities)
+    {
+        int preDistinctCount = __result.Count;
+        __result = __result.Distinct().ToList();
+        if (PatchPlugin.doubleStackSplit.Value && __result.Count == 1 && preDistinctCount == 2 && AbilitiesUtil.GetInfo(__result[0]).canStack)
+        {
+            __result.Add(__result[0]);
+        }
+    }
+
     [HarmonyPatch(typeof(AbilityIconInteractable), "AssignAbility")]
     [HarmonyPostfix]
     private static void AddIconNumber(Ability ability, CardInfo info, PlayableCard card, ref AbilityIconInteractable __instance)
@@ -312,12 +314,12 @@ public static class StackAbilityIcons
         // Find all abilities on the card
         // Replace all of the textures where it stacks with a texture showing that it stacks
         // Okay, go through each ability on the card and see how many instances it has.
-        List<Ability> baseAbilities = new(info.Abilities);
         int? count = null;
+        List<Ability> baseAbilities = new(info.Abilities);
+        AbilityInfo ai = AbilityManager.AllAbilityInfos.AbilityByID(ability);
         if (card != null)
         {
-            baseAbilities.AddRange(AbilitiesUtil.GetAbilitiesFromMods(card.TemporaryMods));
-            AbilityInfo ai = AbilityManager.AllAbilityInfos.AbilityByID(ability);
+            baseAbilities.AddRange(AbilitiesUtil.GetAbilitiesFromMods(card.TemporaryMods/*.Where(x => !x.fromTotem && (!x.fromCardMerge || PatchPlugin.configMergeOnBottom.Value)).ToList()*/));
             if (ai.GetHideSingleStacks())
             {
                 for (int i = 0; i < card.Status.hiddenAbilities.Count(x => x == ability); i++)
@@ -331,12 +333,17 @@ public static class StackAbilityIcons
             if (ai.IsShieldAbility())
                 count = card.GetShieldBehaviour(ability)?.NumShields;
         }
-        
-        count ??= baseAbilities.Count(ab => ab == ability);
-        //Debug.Log($"[{AbilitiesUtil.GetInfo(ability).rulebookName}] {count}");
 
-        if (count > 1) // We need to add an override
-            __instance.SetIcon(PatchTexture(ability, (int)count));
+        count ??= baseAbilities.Count(ab => ab == ability);
+        //PatchPlugin.Logger.LogDebug($"[{AbilitiesUtil.GetInfo(ability).rulebookName}] {count} {baseAbilities.Count}");
+
+        if (count > 1) // we have a stack and need to add an override
+        {
+            if (PatchPlugin.doubleStackSplit.Value && count == 2 && count == baseAbilities.Count)
+                __instance.SetIcon(__instance.LoadIcon(info, ai, card != null && card.OpponentCard));//RenderSameSigilTwice(__instance, ai, info, card);
+            else
+                __instance.SetIcon(PatchTexture(ability, (int)count));
+        }
     }
 
     [HarmonyPatch(typeof(PixelCardAbilityIcons), "DisplayAbilities", new Type[] { typeof(List<Ability>), typeof(PlayableCard) })]
@@ -348,7 +355,6 @@ public static class StackAbilityIcons
 
     public static bool RenderPixelAbilityStacks(PixelCardAbilityIcons __instance, List<Ability> abilities, PlayableCard card)
     {
-        List<Tuple<Ability, int>> grps = abilities.Distinct().Select(a => new Tuple<Ability, int>(a, abilities.Where(ab => ab == a).Count())).ToList();
         List<GameObject> abilityIconGroups = __instance.abilityIconGroups;
         if (abilityIconGroups.Count == 0)
             return false;
@@ -356,22 +362,55 @@ public static class StackAbilityIcons
         foreach (GameObject gameObject in abilityIconGroups)
             gameObject.gameObject.SetActive(false);
 
-        if (grps.Count > 0 && grps.Count - 1 < abilityIconGroups.Count)
+        List<Ability> allDisplayableAbilities = new(abilities);
+        if (card != null)
         {
+            allDisplayableAbilities.AddRange(AbilitiesUtil.GetAbilitiesFromMods(card.TemporaryMods));
+        }
+
+        List<Tuple<Ability, int>> grps = allDisplayableAbilities.Distinct().Select(a => new Tuple<Ability, int>(a, AbilitiesUtil.GetInfo(a).canStack ? abilities.Count(ab => ab == a) : 1)).ToList();
+
+        if (grps.Count > 0 && grps.Count - 1 < abilityIconGroups.Count) // if there are displayable sigils and there are enough icon groups
+        {
+            // if there is only 1 ability and there are two stacks of it, render it twice
+            if (PatchPlugin.doubleStackSplit.Value && grps.Count == 1 && grps[0].Item2 == 2/* && AbilitiesUtil.GetInfo(grps[0].Item1).canStack*/)
+            {
+                //PatchPlugin.Logger.LogDebug($"Displaying {grps[0].Item1} twice");
+                grps[0] = new Tuple<Ability, int>(grps[0].Item1, 1);
+                grps.Add(grps[0]);
+            }
+
             GameObject iconGroup = abilityIconGroups[grps.Count - 1];
             iconGroup.gameObject.SetActive(true);
 
-            List<SpriteRenderer> componentsInChildren = new();
+            List<SpriteRenderer> abilityRenderers = new();
             foreach (Transform child in iconGroup.transform)
-                componentsInChildren.Add(child.gameObject.GetComponent<SpriteRenderer>());
+                abilityRenderers.Add(child.gameObject.GetComponent<SpriteRenderer>());
 
-            componentsInChildren.RemoveAll(sr => sr == null);
+            abilityRenderers.RemoveAll(sr => sr == null);
 
-            for (int i = 0; i < componentsInChildren.Count; i++)
+            CardInfo cardInfo = card?.Info ?? __instance.GetComponentInParent<DiskCardGame.Card>()?.Info;
+            for (int i = 0; i < abilityRenderers.Count; i++)
             {
-                SpriteRenderer abilityRenderer = componentsInChildren[i];
+                SpriteRenderer abilityRenderer = abilityRenderers[i];
                 AbilityInfo abilityInfo = AbilitiesUtil.GetInfo(grps[i].Item1);
-                CardInfo cardInfo = card?.Info ?? __instance.GetComponentInParent<DiskCardGame.Card>()?.Info;
+                int stackCount = grps[i].Item2;
+                if (card != null)
+                {
+                    if (abilityInfo.GetHideSingleStacks())
+                    {
+                        for (int j = 0; j < card.Status.hiddenAbilities.Count(x => x == grps[i].Item1); j++)
+                        {
+                            stackCount--;
+                        }
+                    }
+                    else if (card.Status.hiddenAbilities.Contains(grps[i].Item1))
+                        stackCount -= allDisplayableAbilities.Count(x => x == grps[i].Item1);
+
+                    if (abilityInfo.IsShieldAbility())
+                        stackCount = card.GetShieldBehaviour(grps[i].Item1)?.NumShields ?? 0;
+                }
+
                 abilityRenderer.sprite = abilityInfo.activated ? new() : OverridePixelSprite(abilityInfo, cardInfo, card);
                 if (abilityInfo.flipYIfOpponent && card != null && card.OpponentCard)
                 {
@@ -383,7 +422,8 @@ public static class StackAbilityIcons
                 else
                     abilityRenderer.flipY = false;
 
-                AddStackCount(abilityRenderer, grps[i]);
+                PatchPlugin.Logger.LogDebug($"Ability [{grps[i].Item1}] stacks [{stackCount}] time(s)");
+                AddStackCount(abilityRenderer, grps[i].Item1, stackCount);
             }
         }
         __instance.conduitIcon.SetActive(abilities.Exists((Ability x) => AbilitiesUtil.GetInfo(x).conduit));
@@ -402,14 +442,14 @@ public static class StackAbilityIcons
 
         return false;
     }
-    private static void AddStackCount(SpriteRenderer abilityRenderer, Tuple<Ability, int> grpsI)
+    private static void AddStackCount(SpriteRenderer abilityRenderer, Ability ability, int count)
     {
         // And now my custom code to add the ability counter if we need to
         Transform countTransform = abilityRenderer.transform.Find("Count");
 
         if (countTransform == null)
         {
-            if (grpsI.Item2 <= 1)
+            if (count <= 1)
                 return;
 
             GameObject counter = new();
@@ -428,17 +468,18 @@ public static class StackAbilityIcons
             countTransform = counter.transform;
         }
 
-        if (grpsI.Item2 <= 1)
+        if (count <= 1)
             countTransform.gameObject.SetActive(false);
         else
         {
             countTransform.gameObject.SetActive(true);
-            Debug.Log($"countTransform {grpsI.Item2 - 1}");
-            countTransform.gameObject.GetComponent<SpriteRenderer>().sprite = GBC_NUMBER_SPRITES[grpsI.Item2 - 1];
+            PatchPlugin.Logger.LogDebug($"countTransform [{count - 1}]");
+            countTransform.gameObject.GetComponent<SpriteRenderer>().sprite = GBC_NUMBER_SPRITES[count - 1];
         }
     }
     private static Sprite OverridePixelSprite(AbilityInfo abilityInfo, CardInfo cardInfo, PlayableCard card)
     {
+        // countdown numbers for evolve and transformer
         if (cardInfo != null && (abilityInfo.ability == Ability.Evolve || abilityInfo.ability == Ability.Transformer))
         {
             int turnsInPlay = card?.GetComponentInChildren<Evolve>()?.numTurnsInPlay ?? 0;
@@ -457,7 +498,7 @@ public static class StackAbilityIcons
             return TextureHelper.ConvertTexture(texture, TextureHelper.SpriteType.PixelAbilityIcon);
         }
 
-        if (card && card.RenderInfo.overriddenAbilityIcons.ContainsKey(abilityInfo.ability))
+        if (card != null && card.RenderInfo.overriddenAbilityIcons.ContainsKey(abilityInfo.ability))
         {
             card.RenderInfo.overriddenAbilityIcons.TryGetValue(abilityInfo.ability, out Texture texture);
 

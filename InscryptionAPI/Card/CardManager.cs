@@ -3,7 +3,6 @@ using GBC;
 using HarmonyLib;
 using InscryptionAPI.Guid;
 using InscryptionAPI.Helpers;
-using InscryptionAPI.PixelCard;
 using InscryptionAPI.Saves;
 using MonoMod.Cil;
 using System.Collections.ObjectModel;
@@ -22,7 +21,7 @@ public static class CardManager
         public readonly Dictionary<Type, object> TypeMap = new();
         public readonly Dictionary<string, string> StringMap = new();
     }
-   public class CardAltPortraits
+    public class CardAltPortraits
     {
         public Sprite PixelAlternatePortrait = null;
         public Sprite SteelTrapPortrait = null;
@@ -86,7 +85,7 @@ public static class CardManager
                 card.evolveParams.evolution.Mods = mods;
             }
 
-            if (card.iceCubeParams != null && card.iceCubeParams.creatureWithin != null) 
+            if (card.iceCubeParams != null && card.iceCubeParams.creatureWithin != null)
             {
                 List<CardModificationInfo> mods = card.iceCubeParams.creatureWithin.Mods;
                 card.iceCubeParams.creatureWithin = cards.CardByName(card.iceCubeParams.creatureWithin.name).Clone() as CardInfo;
@@ -295,7 +294,7 @@ public static class CardManager
 
     public static Dictionary<string, string> GetCardExtensionTable(this CardInfo card) => CardExtensionProperties.GetOrCreateValue(card).StringMap;
     internal static CardAltPortraits GetAltPortraits(this CardInfo card) => CardAlternatePortraits.GetOrCreateValue(card);
-    
+
     public static Sprite PixelAlternatePortrait(this CardInfo card)
     {
         return card.GetAltPortraits().PixelAlternatePortrait;

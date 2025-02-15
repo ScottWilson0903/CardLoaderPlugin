@@ -10,7 +10,7 @@
         <DebugType>full</DebugType>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <Version>2.22.3</Version>
+        <Version>2.22.4</Version>
     </PropertyGroup>
 
     <PropertyGroup>

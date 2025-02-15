@@ -74,7 +74,7 @@ public static class GuidManager
         reverseMapper[enumValue] = typeof(T);
         return *(T*)&enumValue;
     }
-    
+
     public static bool TryGetGuidAndKeyEnumValue<T>(T value, out string guid, out string key) where T : System.Enum
     {
         string prefix = $"{typeof(T).Name}";

@@ -1,11 +1,7 @@
-using BepInEx;
 using DiskCardGame;
 using InscryptionAPI.Helpers;
 using InscryptionAPI.Helpers.Extensions;
-using System;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
@@ -21,7 +17,7 @@ public class AscensionChallengePaginator : MonoBehaviour
         {
             //List<GameObject> firstPageObjs = new();
             List<AscensionIconInteractable> icons;
-            
+
             // if the screen object exists, use its list of icons; otherwise use the screenInteractables from the transition object
             if (screen != null)
             {
@@ -166,7 +162,7 @@ public class AscensionChallengePaginator : MonoBehaviour
         screen?.icons.Add(chall);
         if (info != null)
             chall.challengeInfo = info;
-        
+
         return newIcon;
     }
     public void OnEnable()
@@ -180,7 +176,7 @@ public class AscensionChallengePaginator : MonoBehaviour
 
         ChallengeManager.SyncChallengeList();
         Initialize(GetComponent<AscensionChallengeScreen>(), GetComponent<AscensionMenuScreenTransition>());
-        
+
         if (leftArrow)
         {
             Destroy(leftArrow.gameObject);
@@ -202,7 +198,7 @@ public class AscensionChallengePaginator : MonoBehaviour
         if (screen != null)
         {
             screen.icons?.RemoveAll(x => x == null);
-            
+
             icons = screen.icons;
             pageLength = screen.icons.Count;
         }
@@ -287,7 +283,7 @@ public class AscensionChallengePaginator : MonoBehaviour
 
         challengeObjectsForPages.ForEach(x => x.RemoveAll(x => x == null));
         LoadPage(pageIndex = 0);
-        
+
         if (pagesToAdd.Count == 0)
             return;
 

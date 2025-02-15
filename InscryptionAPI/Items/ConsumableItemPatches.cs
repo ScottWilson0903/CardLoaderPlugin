@@ -1,15 +1,10 @@
 using DiskCardGame;
 using HarmonyLib;
-using InscryptionAPI.Boons;
-using InscryptionAPI.Helpers;
 using InscryptionAPI.Items.Extensions;
 using InscryptionAPI.RuleBook;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 using UnityEngine;
 using static InscryptionAPI.Items.ConsumableItemManager;
 

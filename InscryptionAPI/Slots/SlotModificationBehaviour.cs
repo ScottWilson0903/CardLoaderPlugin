@@ -1,5 +1,5 @@
-using System.Collections;
 using DiskCardGame;
+using System.Collections;
 
 namespace InscryptionAPI.Slots;
 

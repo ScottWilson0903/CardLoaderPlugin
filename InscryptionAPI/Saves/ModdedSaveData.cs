@@ -27,9 +27,9 @@ public class ModdedSaveData
 
     public bool TryGetGuidAndKey(string prefix, string enumValue, out string guid, out string key)
     {
-        foreach (KeyValuePair<string,Dictionary<string,object>> pair in SaveData)
+        foreach (KeyValuePair<string, Dictionary<string, object>> pair in SaveData)
         {
-            foreach (KeyValuePair<string,object> valuePair in pair.Value)
+            foreach (KeyValuePair<string, object> valuePair in pair.Value)
             {
                 if (valuePair.Key.StartsWith(prefix, StringComparison.Ordinal))
                 {
@@ -39,16 +39,16 @@ public class ModdedSaveData
                         // to
                         // guid: jamesgames.inscryption.starcraftcore
                         // key: Abduct
-                        string name = valuePair.Key.Substring(prefix.Length+1);
+                        string name = valuePair.Key.Substring(prefix.Length + 1);
                         int underscoreIndex = name.IndexOf('_');
                         guid = name.Substring(0, underscoreIndex);
-                        key = name.Substring(underscoreIndex+1);
+                        key = name.Substring(underscoreIndex + 1);
                         return true;
                     }
                 }
             }
         }
-        
+
         guid = null;
         key = null;
         return false;

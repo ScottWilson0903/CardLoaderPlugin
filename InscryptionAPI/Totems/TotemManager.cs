@@ -17,7 +17,7 @@ public static class TotemManager
         CustomTribes,
         AllTribes
     }
-    
+
     #region Patches
     [HarmonyPatch(typeof(BuildTotemSequencer), "GenerateTotemChoices", new Type[] { typeof(BuildTotemNodeData), typeof(int) })]
     private class ItemsUtil_AllConsumables
@@ -76,13 +76,13 @@ public static class TotemManager
 
             return codes;
         }
-        
+
 
         public static void AddCustomTribesToList(List<Tribe> list)
         {
             list.AddRange(TribeManager.NewTribes.Where(x => x.tribeChoice).Select(x => x.tribe));
             InscryptionAPIPlugin.Logger.LogDebug($"Total Tribes: {list.Count}");
-            
+
             List<CardInfo> cardsWithTribes = CardManager.AllCardsCopy.FindAll(x => x.tribes.Count > 0);
             list.RemoveAll(x => !cardsWithTribes.Exists(ci => ci.IsOfTribe(x)));
 
@@ -158,7 +158,7 @@ public static class TotemManager
             return true;
         }
     }
-    
+
     /// <summary>
     /// If someone added a mod with sigils then removed the mod. They have learned the ability but it no longer exists.
     /// This breaks the new totem sequence because it's not checking if the ability info exists.

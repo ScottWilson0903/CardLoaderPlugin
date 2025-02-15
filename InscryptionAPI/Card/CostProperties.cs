@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using DiskCardGame;
 using GBC;
 using HarmonyLib;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace InscryptionAPI.Card.CostProperties;
@@ -69,7 +68,7 @@ public static class CostProperties
     }
 
     public static ConditionalWeakTable<CardInfo, List<WeakReference<PlayableCard>>> CardInfoToCard = new();
-    
+
     /// <summary>
     /// ChangeCardCostGetter patches BloodCost so we can change the cost on the fly
     /// This reverse patch gives us access to the original method without any changes.
@@ -77,7 +76,7 @@ public static class CostProperties
     /// </summary>
     [HarmonyReversePatch, HarmonyPatch(typeof(CardInfo), nameof(CardInfo.BloodCost), MethodType.Getter), MethodImpl(MethodImplOptions.NoInlining)]
     public static int OriginalBloodCost(CardInfo __instance) { return 0; }
-    
+
     /// <summary>
     /// ChangeCardCostGetter patches BoneCost so we can change the cost on the fly
     /// This reverse patch gives us access to the original method without any changes.
@@ -85,7 +84,7 @@ public static class CostProperties
     /// </summary>
     [HarmonyReversePatch, HarmonyPatch(typeof(CardInfo), nameof(CardInfo.BonesCost), MethodType.Getter), MethodImpl(MethodImplOptions.NoInlining)]
     public static int OriginalBonesCost(CardInfo __instance) { return 0; }
-    
+
     /// <summary>
     /// ChangeCardCostGetter patches GemsCost so we can change the cost on the fly
     /// This reverse patch gives us access to the original method without any changes.
@@ -155,7 +154,7 @@ internal static class ChangeCardCostGetter
         __result = Mathf.Max(0, card?.BloodCost() ?? CostProperties.OriginalBloodCost(__instance));
         return false;
     }
-    
+
     [HarmonyPatch(typeof(CardInfo), nameof(CardInfo.BonesCost), MethodType.Getter), HarmonyPrefix]
     public static bool BoneCost(CardInfo __instance, ref int __result)
     {
@@ -166,7 +165,7 @@ internal static class ChangeCardCostGetter
         __result = Mathf.Max(0, card.BonesCost());
         return false;
     }
-    
+
     [HarmonyPatch(typeof(CardInfo), nameof(CardInfo.GemsCost), MethodType.Getter), HarmonyPrefix]
     public static bool GemsCost(CardInfo __instance, ref List<GemType> __result)
     {
@@ -174,7 +173,7 @@ internal static class ChangeCardCostGetter
         __result = card?.GemsCost() ?? CostProperties.ImprovedGemsCost(__instance);
         return false;
     }
-    
+
     [HarmonyPatch(typeof(CardInfo), nameof(CardInfo.EnergyCost), MethodType.Getter), HarmonyPrefix]
     public static bool EnergyCost(CardInfo __instance, ref int __result)
     {
@@ -297,10 +296,10 @@ internal static class TurnManager_CleanupPhase
         yield return AccessTools.Method(typeof(TurnManager), nameof(TurnManager.CleanupPhase));
         yield return AccessTools.Method(typeof(GBCEncounterManager), nameof(GBCEncounterManager.LoadOverworldScene));
     }
-    
+
     private static void Postfix()
     {
         // NOTE: This is a hack to clear the table
-        CostProperties.CardInfoToCard = new ConditionalWeakTable<CardInfo, List<WeakReference<PlayableCard>>>(); 
+        CostProperties.CardInfoToCard = new ConditionalWeakTable<CardInfo, List<WeakReference<PlayableCard>>>();
     }
 }

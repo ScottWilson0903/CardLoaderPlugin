@@ -1,9 +1,7 @@
 using DiskCardGame;
 using GBC;
 using HarmonyLib;
-using InscryptionAPI.Card;
 using InscryptionAPI.Dialogue;
-using InscryptionAPI.Helpers;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;

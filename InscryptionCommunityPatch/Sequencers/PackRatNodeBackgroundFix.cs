@@ -1,12 +1,6 @@
 using DiskCardGame;
 using HarmonyLib;
-using InscryptionAPI.Helpers;
-using InscryptionCommunityPatch.Card;
-using Pixelplacement;
-using System.Collections;
-using System.Reflection;
 using System.Reflection.Emit;
-using UnityEngine;
 
 namespace InscryptionCommunityPatch.Sequencers;
 
@@ -18,7 +12,7 @@ internal class PackRatNodeBackgroundFix
     private static IEnumerable<CodeInstruction> FixRareBackground(IEnumerable<CodeInstruction> instructions)
     {
         List<CodeInstruction> codes = new(instructions);
-        
+
         // a part of the code block we want to remove can't be removed without breaking the ienum
         // so we cut around it
         for (int i = 0; i < codes.Count; i++)

@@ -4,7 +4,6 @@ using HarmonyLib;
 using InscryptionAPI.Card;
 using InscryptionAPI.Dialogue;
 using InscryptionAPI.Guid;
-using InscryptionAPI.Helpers;
 using Sirenix.Utilities;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -207,7 +206,7 @@ public static class CardCostManager
     public static List<FullCardCost> AllCustomCosts { get; private set; } = new();
 
     internal readonly static ObservableCollection<FullCardCost> NewCosts = new();
-    
+
     public static event Func<List<FullCardCost>, List<FullCardCost>> ModifyCustomCostList;
 
     // you don't have the [colour] gem for that.

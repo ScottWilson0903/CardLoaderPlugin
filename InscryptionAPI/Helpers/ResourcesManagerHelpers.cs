@@ -109,7 +109,7 @@ public static class ResourcesManagerHelpers
 public static class GetEmptyBatterySprite
 {
     public static Sprite emptyBatterySprite = null;
-    
+
     [HarmonyPostfix]
     private static void GetSprite(PixelResourcesManager __instance)
     {

@@ -80,7 +80,11 @@ public static class TextureHelper
         /// <summary>
         /// The texture for a button in Act 2 (same kind of button used for the hammer and activated sigils).
         /// </summary>
-        PixelStandardButton = 12
+        PixelStandardButton = 12,
+
+        Act2CostVanillaLeft = 13,
+
+        Act2CostVanillaRight = 14
     };
 
     private static Vector2 DEFAULT_PIVOT = new(0.5f, 0.5f);
@@ -89,8 +93,8 @@ public static class TextureHelper
 
     private static readonly Dictionary<SpriteType, Rect> SPRITE_RECTS = new()
     {
-        { SpriteType.CardPortrait, new Rect(0.0f, 0.0f, 114.0f, 94.0f) },
-        { SpriteType.PixelPortrait, new Rect(0.0f, 0.0f, 41.0f, 28.0f) },
+        { SpriteType.CardPortrait, new Rect(0f, 0f, 114f, 94f) },
+        { SpriteType.PixelPortrait, new Rect(0f, 0f, 41f, 28f) },
         { SpriteType.PixelAbilityIcon, new Rect(0f, 0f, 17f, 17f) },
         { SpriteType.PixelStatIcon, new Rect(0f, 0f, 16f, 8f) },
         { SpriteType.ChallengeIcon, new Rect(0f, 0f, 49f, 49f) },
@@ -101,7 +105,9 @@ public static class TextureHelper
         { SpriteType.StarterDeckIcon, new Rect(0f, 0f, 35f, 44f) },
         { SpriteType.PixelDecal, new Rect(0f, 0f, 42f, 56f) },
         { SpriteType.PixelActivatedAbilityIcon, new Rect(0f, 0f, 22f, 10f) },
-        { SpriteType.PixelStandardButton, new Rect(0f, 0f, 26f, 17f) }
+        { SpriteType.PixelStandardButton, new Rect(0f, 0f, 26f, 17f) },
+        { SpriteType.Act2CostVanillaLeft, new Rect(0f, 0f, 48f, 28f) }, // vanilla costs should have a creme border on the left and right so we don't need padding
+        { SpriteType.Act2CostVanillaRight, new Rect(0f, 0f, 48f, 28f) }
     };
 
     private static readonly Dictionary<SpriteType, Vector2> SPRITE_PIVOTS = new()
@@ -118,7 +124,9 @@ public static class TextureHelper
         { SpriteType.StarterDeckIcon, DEFAULT_PIVOT },
         { SpriteType.PixelDecal, DEFAULT_PIVOT },
         { SpriteType.PixelActivatedAbilityIcon, DEFAULT_PIVOT },
-        { SpriteType.PixelStandardButton, new Vector2(0.5f, 0f) }
+        { SpriteType.PixelStandardButton, new Vector2(0.5f, 0f) },
+        { SpriteType.Act2CostVanillaLeft, new Vector2(0.58f, 0.77f) },
+        { SpriteType.Act2CostVanillaRight, new Vector2(0.75f, 0.77f) }
     };
 
     /// <summary>
@@ -247,18 +255,18 @@ public static class TextureHelper
     {
         if (sprite == null)
             return null;
-        
+
         if (emissionMap.TryGetValue(sprite, out Sprite emission))
             return emission;
-        
-        
+
+
         string text = sprite.name + "_emission";
         emission = ResourceBank.Get<Sprite>("Art/Cards/Portraits/" + text);
         if (emission != null)
         {
             return emission;
         }
-        
+
         emission = ResourceBank.Get<Sprite>("Art/Cards/GrimoraPortraits/" + text);
         if (emission != null)
         {

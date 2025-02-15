@@ -4,7 +4,6 @@ using HarmonyLib;
 using InscryptionAPI.Helpers.Extensions;
 using InscryptionAPI.Triggers;
 using System.Collections;
-using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
@@ -104,7 +103,7 @@ public static class ShieldManager
     [HarmonyPrefix, HarmonyPatch(typeof(PlayableCard), nameof(PlayableCard.ResetShield), new Type[] { })]
     private static void ResetModShields(PlayableCard __instance) // runs before the base ResetShield logic
     {
-        foreach (var com in __instance.GetComponents<DamageShieldBehaviour>())
+        foreach (DamageShieldBehaviour com in __instance.GetComponents<DamageShieldBehaviour>())
             com.ResetShields(false);
 
         // if we're using the broken shield portrait, reset to the default portrait - if we're MudTurtle
@@ -216,23 +215,26 @@ public static class ShieldManager
     {
         // remove all abilities that hide the entire stack
         abilities.RemoveAll(x => hiddenAbilities.Contains(x) && !x.GetHideSingleStacks());
-        foreach (var ab in hiddenAbilities.Where(x => x.GetHideSingleStacks()))
+        foreach (Ability ab in hiddenAbilities.Where(x => x.GetHideSingleStacks()))
             abilities.Remove(ab);
+
         return abilities;
     }
     private static void CorrectHiddenAbilityRender(PlayableCard card)
     {
-        foreach (var com in card.GetComponents<DamageShieldBehaviour>())
+        foreach (DamageShieldBehaviour com in card.GetComponents<DamageShieldBehaviour>().Where(x => x.initialised))
         {
             if (com.HasShields())
             {
                 if (com.Ability.GetHideSingleStacks())
                 {
                     // if there are more hidden shields than there should be
-                    int removeStacks = card.Status.hiddenAbilities.Count(x => x == com.Ability) - com.NumShields;
-                    for (int i = 0; i < removeStacks; i++)
+                    if (card.Status.hiddenAbilities.Count(x => x == com.Ability) >= com.NumShields)
                     {
-                        card.Status.hiddenAbilities.Remove(com.Ability);
+                        for (int i = 0; i < com.NumShields; i++)
+                        {
+                            card.Status.hiddenAbilities.Remove(com.Ability);
+                        }
                     }
                 }
                 else
@@ -245,11 +247,13 @@ public static class ShieldManager
             {
                 if (com.Ability.GetHideSingleStacks())
                 {
+                    card.AddShieldCount(1, Ability.DeathShield);
                     int shieldsLost = com.StartingNumShields - com.NumShields;
                     if (card.Status.hiddenAbilities.Count(x => x == com.Ability) < shieldsLost)
                     {
                         for (int i = 0; i < shieldsLost; i++)
                         {
+                            //Debug.Log($"{com.StartingNumShields} {com.NumShields} {shieldsLost} Add hidden");
                             card.Status.hiddenAbilities.Add(com.Ability);
                         }
                     }
@@ -271,7 +275,7 @@ public static class ShieldManager
         card.RenderCard();
     }
 
-    [HarmonyPostfix, HarmonyPatch(typeof(PlayableCard), nameof(PlayableCard.AddTemporaryMod))]
+    [HarmonyPrefix, HarmonyPatch(typeof(PlayableCard), nameof(PlayableCard.AddTemporaryMod))]
     private static void AddTemporaryShieldCount(PlayableCard __instance, CardModificationInfo mod)
     {
         if (__instance == null || mod == null)
@@ -287,7 +291,7 @@ public static class ShieldManager
                 {
                     DamageShieldBehaviour behaviour = __instance.TriggerHandler.triggeredAbilities.Find(x => x.Item1 == ability).Item2 as DamageShieldBehaviour;
                     behaviour.AddShields(1);
-                    //InscryptionAPIPlugin.Logger.LogInfo($"Add: {__instance.Info.name} {behaviour.NumShields} <-- {behaviour.NumShields - 1}");
+                    //InscryptionAPIPlugin.Logger.LogInfo($"Add: {__instance.Info.name} {behaviour.NumShields - 1} --> {behaviour.NumShields}");
                 }
             }
         }

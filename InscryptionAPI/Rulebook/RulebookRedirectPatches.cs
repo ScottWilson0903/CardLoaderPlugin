@@ -1,12 +1,6 @@
 using DiskCardGame;
 using HarmonyLib;
-using InscryptionAPI.Card;
-using InscryptionAPI.Helpers.Extensions;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -31,9 +25,9 @@ public static class RulebookRedirectPatches
     [HarmonyPostfix, HarmonyPatch(typeof(RuleBookController), nameof(RuleBookController.Start))]
     private static void CreateRedirectManager(RuleBookController __instance)
     {
-        if (RuleBookRedirectManager.m_Instance == null)
+        if (__instance.gameObject.GetComponent<RuleBookRedirectManager>() == null)
         {
-            __instance.gameObject.AddComponent<RuleBookRedirectManager>();
+            RuleBookRedirectManager.m_Instance = __instance.gameObject.AddComponent<RuleBookRedirectManager>();
         }
     }
 

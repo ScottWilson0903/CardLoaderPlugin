@@ -1,6 +1,6 @@
-using System.Text;
 using HarmonyLib;
 using InscryptionAPI.Guid;
+using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -16,7 +16,7 @@ public static partial class LocalizationManager
         public string PathToStringTable;
         public Language Language;
     }
-    
+
     public class CustomTranslation
     {
         public string PluginGUID;
@@ -43,7 +43,7 @@ public static partial class LocalizationManager
 
     public static string[] AllLanguageNames = new string[] { };
     public static string[] AllLanguageButtonText = new string[] { };
-    
+
     public static List<CustomLanguage> AllLanguages = new();
     public static List<CustomLanguage> NewLanguages = new();
     public static List<CustomTranslation> CustomTranslations = new();
@@ -87,7 +87,7 @@ public static partial class LocalizationManager
         }
     }
 
-    public static Language NewLanguage(string pluginGUID, string languageName, string code, string resetButtonText, string stringTablePath = null, List<FontReplacement> fontReplacements=null)
+    public static Language NewLanguage(string pluginGUID, string languageName, string code, string resetButtonText, string stringTablePath = null, List<FontReplacement> fontReplacements = null)
     {
         Language language = GuidManager.GetEnumValue<Language>(pluginGUID, languageName);
         CustomLanguage customLanguage = new()
@@ -110,7 +110,7 @@ public static partial class LocalizationManager
                 AddFontReplacement(language, replacement);
             }
         }
-        
+
         return language;
     }
 
@@ -125,7 +125,7 @@ public static partial class LocalizationManager
             });
             return;
         }
-        
+
         FontReplacementData.LanguageFontReplacements replacements = FontReplacementData.instance.languageFontReplacements.Find((a) => a.languages.Contains(language));
         if (replacements == null)
         {
@@ -165,23 +165,23 @@ public static partial class LocalizationManager
                 InscryptionAPIPlugin.Logger.LogError("Unknown font replacement type: " + type.ToString().ToUpper());
                 return null;
         }
-        
+
         if (replacement == null)
         {
             InscryptionAPIPlugin.Logger.LogError("Could not find font replacement for " + type.ToString().ToUpper());
             return null;
         }
-        
-        replacement = UnityObject.Instantiate(replacement); 
+
+        replacement = UnityObject.Instantiate(replacement);
         if (font != null || tmpFont != null)
         {
             replacement.replacementFont = font;
             replacement.replacementTMPFont = tmpFont;
         }
-        
+
         return replacement;
     }
-    
+
     private static void ImportStringTable(string stringTablePath, Language language)
     {
         string lines = File.ReadAllText(stringTablePath);
@@ -347,7 +347,7 @@ public static partial class LocalizationManager
             }
         }
     }
-    
+
     /// <summary>
     /// Retrieves the LanguageCode for the given Language.
     /// </summary>
@@ -358,7 +358,7 @@ public static partial class LocalizationManager
         {
             return customLanguage.LanguageCode;
         }
-        
+
         return null;
     }
 
@@ -372,7 +372,7 @@ public static partial class LocalizationManager
         {
             return customLanguage.Language;
         }
-        
+
         return Language.NUM_LANGUAGES;
     }
 
@@ -412,7 +412,7 @@ public static partial class LocalizationManager
         File.WriteAllText(path, stringBuilder.ToString());
         InscryptionAPIPlugin.Logger.LogInfo($"Exported .csv file to {path}");
     }
-    
+
     [Obsolete("Use Translate() instead")]
     public static CustomTranslation New(string pluginGUID, string id, string englishString, string translatedString, Language language)
     {

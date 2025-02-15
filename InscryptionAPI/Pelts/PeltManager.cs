@@ -2,7 +2,6 @@ using BepInEx;
 using DiskCardGame;
 using InscryptionAPI.Dialogue;
 using InscryptionAPI.Guid;
-using InscryptionAPI.Helpers;
 using Sirenix.Utilities;
 using System.Reflection;
 using UnityEngine;
@@ -207,14 +206,17 @@ public static class PeltManager
             string dialogueId = "TraderPelts" + name;
             if (!DialogueManager.CustomDialogue.Exists(x => x.DialogueEvent.id == dialogueId))
             {
-                if (name.Contains("pelt") || name.Contains("pelt")) {
+                if (name.Contains("pelt") || name.Contains("pelt"))
+                {
                     DialogueManager.GenerateEvent(InscryptionAPIPlugin.ModGUID, dialogueId,
                         new()
                         {
                             name + "pelts..."
                         }
                     );
-                 } else {
+                }
+                else
+                {
                     DialogueManager.GenerateEvent(InscryptionAPIPlugin.ModGUID, dialogueId,
                         new()
                         {
@@ -229,10 +231,13 @@ public static class PeltManager
     public static string GetTierNameFromPelt(string cardName)
     {
         string result = "";
-        if (cardName.Contains("pelt") || cardName.Contains("pelt")) {
+        if (cardName.Contains("pelt") || cardName.Contains("pelt"))
+        {
             result = cardName.ToLowerInvariant().Replace("pelt", "").Replace("pelts", "");
             result = result.Split('_').Last().ToTitleCase();
-        } else {
+        }
+        else
+        {
             result = cardName.ToLowerInvariant();
             result = result.Split('_').Last().ToTitleCase();
         }

@@ -1,13 +1,6 @@
 using DiskCardGame;
-using HarmonyLib;
-using InscryptionAPI.Card;
-using InscryptionAPI.Guid;
-using InscryptionAPI.Helpers;
-using InscryptionAPI.Helpers.Extensions;
 using InscryptionAPI.Items.Extensions;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using UnityEngine;
 using static InscryptionAPI.Boons.BoonManager;
 using static InscryptionAPI.Slots.SlotModificationManager;
@@ -23,7 +16,7 @@ public static class RuleBookManager
         public Color redirectTextColour;
         public string redirectPageId;
 
-        public RedirectInfo (PageRangeType redirectType, Color redirectTextColour, string redirectPageId)
+        public RedirectInfo(PageRangeType redirectType, Color redirectTextColour, string redirectPageId)
         {
             this.redirectType = redirectType;
             this.redirectTextColour = redirectTextColour;
@@ -112,7 +105,7 @@ public static class RuleBookManager
 
         public int GetStartingNumber(List<RuleBookPageInfo> pages) => GetStartingNumberFunc(pages);
         public int GetInsertPosition(PageRangeInfo currentPageRange, List<RuleBookPageInfo> pages) => GetInsertPositionFunc(currentPageRange, pages);
-        public List<RuleBookPageInfo> CreatePages(RuleBookInfo instance, PageRangeInfo currentPageRange, AbilityMetaCategory metaCategory) => CreatePagesFunc(instance, currentPageRange,metaCategory);
+        public List<RuleBookPageInfo> CreatePages(RuleBookInfo instance, PageRangeInfo currentPageRange, AbilityMetaCategory metaCategory) => CreatePagesFunc(instance, currentPageRange, metaCategory);
         public void FillRuleBookPage(RuleBookPage instance, string pageId, params object[] otherArgs) => FillPageAction(instance, pageId, otherArgs);
 
         public FullRuleBookRangeInfo(
@@ -148,7 +141,7 @@ public static class RuleBookManager
 
     public static List<FullRuleBookRangeInfo> AllRuleBookInfos { get; private set; }
     public static event Func<List<FullRuleBookRangeInfo>, List<FullRuleBookRangeInfo>> ModifyRuleBookInfos;
-    
+
     static RuleBookManager()
     {
         NewRuleBookInfos.CollectionChanged += static (_, _) =>
@@ -212,7 +205,7 @@ public static class RuleBookManager
         Func<PageRangeInfo, List<RuleBookPageInfo>, int> getInsertPositionFunc,
         Func<RuleBookInfo, PageRangeInfo, AbilityMetaCategory, List<RuleBookPageInfo>> createPagesFunc)
     {
-        
+
         FullRuleBookRangeInfo info = new(
             modGuid, pageType,
             headerPrefix, subsectionName,
@@ -307,8 +300,8 @@ public static class RuleBookManager
     /// <param name="offsetView">Whether to offset the camera view down when opening the rulebook.</param>
     public static void OpenToCustomPage(this RuleBookController instance, string pageId, bool offsetView = false)
     {
-        instance.SetShown(shown: true, offsetView);
         int pageIndex = -1;
+        instance.SetShown(shown: true, offsetView);
         if (pageId.StartsWith(RuleBookManagerPatches.API_ID))
             pageIndex = instance.PageData.IndexOf(instance.PageData.Find(x => !string.IsNullOrEmpty(x.pageId) && x.pageId == pageId));
         else

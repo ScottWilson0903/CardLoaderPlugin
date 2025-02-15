@@ -100,7 +100,7 @@ internal static class AscensionChallengeScreenPatches
         {
             string arg = Localization.ToUpper(Localization.Translate(challengeInfo.title));
             string text = string.Format(Localization.Translate(activated ? "{0} ENABLED" : "{0} DISABLED"), arg);
-            
+
             string text2;
             if (activated)
                 text2 = string.Format(Localization.Translate("{0} Challenge Points Subtracted"), (-challengeInfo.pointValue).ToString());

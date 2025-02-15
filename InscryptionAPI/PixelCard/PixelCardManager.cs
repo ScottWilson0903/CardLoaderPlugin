@@ -3,10 +3,7 @@ using GBC;
 using HarmonyLib;
 using InscryptionAPI.Card;
 using InscryptionAPI.Helpers;
-using InscryptionAPI.Resource;
-using Mono.Cecil;
 using System.Collections;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,7 +23,7 @@ public static class PixelCardManager // code courtesy of Nevernamed and James/ke
 
     public static PixelDecalData AddGBCDecal(string pluginGUID, string textureName, Texture2D texture)
     {
-        PixelDecalData result =  new()
+        PixelDecalData result = new()
         {
             PluginGUID = pluginGUID,
             TextureName = textureName,
@@ -34,7 +31,7 @@ public static class PixelCardManager // code courtesy of Nevernamed and James/ke
         };
         if (!CustomPixelDecals.Contains(result))
             CustomPixelDecals.Add(result);
-        
+
         return result;
     }
     internal static void Initialise()

@@ -45,7 +45,7 @@ public static class SlotAttackSlotPatches
 
         // Trigger IModifyDirectDamage first and treat the new damage as the attacking card's attack
         var modifyDirectDamage = CustomTriggerFinder.FindGlobalTriggers<IModifyDirectDamage>(true).ToList();
-        modifyDirectDamage.Sort((a, b) => 
+        modifyDirectDamage.Sort((a, b) =>
             b.TriggerPriority(opposingSlot, damage, attackingSlot.Card)
             - a.TriggerPriority(opposingSlot, damage, attackingSlot.Card)
         );
@@ -53,7 +53,7 @@ public static class SlotAttackSlotPatches
         foreach (var modify in modifyDirectDamage)
         {
             if (modify.RespondsToModifyDirectDamage(opposingSlot, damage, attackingSlot.Card, originalDamage))
-                damage = modify.OnModifyDirectDamage(opposingSlot, damage, attackingSlot.Card, originalDamage);  
+                damage = modify.OnModifyDirectDamage(opposingSlot, damage, attackingSlot.Card, originalDamage);
         }
 
         // first thing we check for is self-damage; if the attacking slot is on the same side as the opposing slot, deal self-damage
@@ -157,7 +157,7 @@ public static class SlotAttackSlotPatches
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -188,13 +188,13 @@ public static class SlotAttackSlotPatches
                 if (op_DisplayClass == null && codes[i].operand?.ToString() == name_CombatPhase)
                 {
                     op_DisplayClass = codes[i].operand;
-                    op_AttackingSlot = codes[i+1].operand;
+                    op_AttackingSlot = codes[i + 1].operand;
                     break;
                 }
             }
 
             int j = startIndex;
-            
+
             // CustomFields.Set(this.CombatPhase.AttackingSlot.Card, "modifiedAttack", DamageToDealThisPhase(this.CombatPhase.AttackingSlot, this.OpposingSlot));
             codes.Insert(j++, new(OpCodes.Ldarg_0));
             codes.Insert(j++, new(OpCodes.Ldfld, op_DisplayClass));
@@ -213,9 +213,9 @@ public static class SlotAttackSlotPatches
             index = j;
 
             // replace the next 2 occurances of get_Attack() with the custom field call
-            for (int c = 0; c < 2; c++) 
+            for (int c = 0; c < 2; c++)
             {
-                for (; j < codes.Count; j++) 
+                for (; j < codes.Count; j++)
                 {
                     if (codes[j].opcode != OpCodes.Callvirt || codes[j].operand.ToString() != name_GetAttack) continue;
 

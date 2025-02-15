@@ -1,10 +1,7 @@
 using DiskCardGame;
 using GBC;
-using HarmonyLib;
 using InscryptionAPI.Helpers.Extensions;
-using InscryptionAPI.Triggers;
 using System.Collections;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace InscryptionAPI.Card;
@@ -20,10 +17,13 @@ public abstract class DamageShieldBehaviour : AbilityBehaviour
     public abstract int StartingNumShields { get; } // how many shields this sigil will provide initially
     public bool HasShields() => NumShields > 0;
 
+    public bool initialised = false;
     public virtual void Start()
     {
         if (base.Card != null)
             numShields = StartingNumShields;
+
+        initialised = true;
     }
 
     public virtual void AddShields(int amount, bool updateDisplay = true)

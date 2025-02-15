@@ -36,7 +36,7 @@ public static class AbilityManager
         /// The unique ID for this ability
         /// </summary>
         public readonly Ability Id;
-        
+
         /// <summary>
         /// The guid of the mod that added this ability
         /// </summary>
@@ -74,7 +74,7 @@ public static class AbilityManager
         /// Tuple.Item3 (string): the id that the API will match against to find the redirect page. Eg, for ability redirects this will be the Ability id as a string.
         /// </summary>
         public Dictionary<string, RuleBookManager.RedirectInfo> RulebookDescriptionRedirects = new();
-        
+
         internal static ConditionalWeakTable<AbilityInfo, FullAbility> ReverseMapper = new();
 
         /// <summary>
@@ -265,7 +265,7 @@ public static class AbilityManager
                 baseGame.Add(ab);
                 continue;
             }
-            baseGame.Add(new FullAbility (
+            baseGame.Add(new FullAbility(
                 null,
                 ability.ability,
                 ability,
@@ -276,7 +276,7 @@ public static class AbilityManager
 
         return baseGame;
     }
-    
+
     /// <summary>
     /// Creates a new ability and registers it to be able to be added to cards
     /// </summary>

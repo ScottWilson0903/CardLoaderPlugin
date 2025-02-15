@@ -36,6 +36,9 @@ public class PatchPlugin : BaseUnityPlugin
 
     internal static ConfigEntry<bool> rightAct2Cost;
     internal static ConfigEntry<bool> act2CostRender;
+    internal static ConfigEntry<bool> act2VanillaStyle;
+
+    internal static ConfigEntry<bool> doubleStackSplit;
 
     internal static ConfigEntry<bool> act2StackIconType;
 
@@ -53,6 +56,7 @@ public class PatchPlugin : BaseUnityPlugin
     internal static ConfigEntry<bool> configDefaultDrone;
 
     internal static ConfigEntry<bool> act2TutorCenterRows;
+
 
     new internal static ManualLogSource Logger;
 
@@ -91,8 +95,11 @@ public class PatchPlugin : BaseUnityPlugin
         configShowSquirrelTribeOnCards = Config.Bind("Tribes", "Show Squirrel Tribe", false, "Shows the Squirrel tribe icon on cards");
         act2CostRender = Config.Bind("Card Costs", "GBC Cost render", true, "GBC Cards are able to display custom costs and hybrid costs through the API.");
         rightAct2Cost = Config.Bind("Card Costs", "GBC Cost On Right", true, "GBC Cards display their costs on the top-right corner. If false, display on the top-left corner");
+        act2VanillaStyle = Config.Bind("Card Costs", "GBC Vanilla Render", false, "GBC cards use vanilla sprites when rendering multiple and custom costs.");
         configMergeOnBottom = Config.Bind("Sigil Display", "Merge_On_Botom", false, "Makes it so if enabled, merged sigils will display on the bottom of the card instead of on the artwork. In extreme cases, this can cause some visual bugs.");
         configRemovePatches = Config.Bind("Sigil Display", "Remove_Patches", false, "Makes it so if enabled, merged sigils will not have a patch behind them anymore and will instead be glowing yellow (only works with Merge_On_Bottom).");
+        doubleStackSplit = Config.Bind("Sigil Display", "Vanilla Stacking", false, "If enabled, cards with only two visible sigils will display each separately even if they can stack.");
+
         configSmallPricetags = Config.Bind("Act 1", "Smaller Pricetags", false, "If enabled, the price tags placed on cards while buying from the Trapper will be scaled down.");
         configMovePricetags = Config.Bind("Act 1", "Move Pricetags", false, "If enabled, the price tags placed on cards while buying from the Trapper will be moved to the right.");
         act2StackIconType = Config.Bind("Sigil Display", "Act 2 Sigil icon type", true, "If true, stacking icons are a cream outline with a black center. If false, stacking icons are a black outline with a cream center. Act 2");
